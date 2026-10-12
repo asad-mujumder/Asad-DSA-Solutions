@@ -51,31 +51,37 @@ using namespace std;
 
 class Solution {
 public:
+    // Approach 1: Hash Map
     int majorityElementUsingMap(vector<int>& nums) {
+      // Map: value -> number of times it appears in nums
       unordered_map<int,int> um;
       for(int i = 0; i < nums.size(); i++) {
         um[nums[i]]++;
       }
+      // The majority element is the one appearing more than n / 2 times
       for(auto m:um) {
         if(m.second > nums.size() / 2) return m.first;
       }
-      return -1;
+      return -1; // Unreachable: a majority element is guaranteed to exist
     }
 
+    // Approach 2: Boyer-Moore Voting Algorithm
     int majorityElement(vector<int>& nums) {
       int candidate = -1, votes = 0;
       for(int i = 0; i < nums.size(); i++) {
         if(votes == 0) {
+          // No active candidate: adopt the current element
           candidate = nums[i];
           votes = 1;
         } else {
           if(nums[i] == candidate) {
-            votes++;
+            votes++; // Same as candidate: strengthen it
           } else {
-            votes--;
+            votes--; // Different: cancels out one vote
           }
         }
       }
+      // Verification pass: count occurrences of the surviving candidate
       int count;
       for(int i = 0; i < nums.size(); i++) {
         if(nums[i] == candidate) count++;
