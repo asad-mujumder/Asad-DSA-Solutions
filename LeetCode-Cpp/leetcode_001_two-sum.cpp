@@ -34,7 +34,15 @@
  * Language: C++
  * Approaches:
  *   # Approach 1 (twoSum): Unordered Map
- *       1. 
+ *       1. Keep a hash map of value -> index for the elements visited so far.
+ *       2. For each nums[i], compute its complement: target - nums[i].
+ *       3. If the complement is already in the map, we found the pair: return
+ *           {index of complement, i}.
+ *       4. Otherwise store nums[i] -> i and continue.
+ *       Inserting after the lookup guarantees the same element is never used twice.
+ *       
+ *       Time Complexity:  O(n) - single pass, O(1) average per lookup/insert
+ *       Space Complexity: O(n) - the map can hold up to n entries
  *
  */
 
@@ -45,19 +53,25 @@ using namespace std;
 
 class Solution {
 public:
-    // Approach 1: 
+    // Approach 1: Hash Map (one pass)
     vector<int> twoSum(vector<int>& nums, int target) {
+      // Map: value -> index of that value among the elements visited so far
       unordered_map<int,int> mp;
 
       for(int i = 0; i < nums.size(); i++) {
+        // Look for the number that completes the sum with nums[i]
         auto it = mp.find((target - nums[i]));
         if(it != mp.end()) {
+          // Complement seen earlier: return its index and the current index
           return {it->second,i};
           // return {(*it).second, i};
         }
+        // Not found: remember the current value (after the lookup, so an
+        // element is never paired with itself)
         mp[nums[i]] = i;
       }
 
+      // Unreachable: exactly one solution is guaranteed
       return {-1,-1};
     }
 };
